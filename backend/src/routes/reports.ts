@@ -63,8 +63,12 @@ router.post('/generate', async (req: AuthRequest, res) => {
     browser = null;
 
     const pdfBuffer = Buffer.from(pdfUint8);
-    const period = format(new Date(end), 'MM-yy');
-    const filename = `${employee_name.replace(/\s+/g, '_')}_${period}_PKUP.pdf`;
+    const period = format(new Date(end), 'MM/yy');
+    const safeName = employee_name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '_');
+    const filename = `${safeName}_${period}_PKUP.pdf`;
     const storagePath = `${req.user!.id}/${filename}`;
 
     // Upload PDF to Supabase Storage
