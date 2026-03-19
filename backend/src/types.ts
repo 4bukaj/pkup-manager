@@ -5,10 +5,7 @@ export interface IJiraIssue {
 }
 
 export interface UserSettings {
-  github_owner?: string;
-  github_repos?: string[];
   atlasian_key?: string;
-  github_token?: string;
   employee_name?: string;
   position?: string;
   department?: string;

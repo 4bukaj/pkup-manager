@@ -15,7 +15,7 @@ export const useUserSettingsData = () => {
       const { data, error } = await supabase
         .from('user_settings')
         .select(
-          'github_owner, github_repos, atlasian_key, employee_name, position, department, supervisor_name'
+          'atlasian_key, employee_name, position, department, supervisor_name'
         )
         .eq('user_id', user.id)
         .single();

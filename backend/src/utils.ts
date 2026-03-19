@@ -2,10 +2,14 @@ import { format, set, subMonths, addDays } from 'date-fns';
 import { supabase } from './supabaseClient';
 import { UserSettings } from './types';
 
-export const getUserSettings = async (userId: string): Promise<UserSettings> => {
+export const getUserSettings = async (
+  userId: string
+): Promise<UserSettings> => {
   const { data, error } = await supabase
     .from('user_settings')
-    .select('github_owner, github_repos, atlasian_key, employee_name, position, department, supervisor_name')
+    .select(
+      'atlasian_key, employee_name, position, department, supervisor_name'
+    )
     .eq('user_id', userId)
     .single();
 
