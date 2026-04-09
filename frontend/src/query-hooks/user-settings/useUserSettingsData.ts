@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { supabase } from '@/supabaseClient';
 import type { IUserSettings } from '@/types/settings.types';
 

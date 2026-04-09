@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  IconButton,
-  InputAdornment,
-} from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import ClearIcon from '@mui/icons-material/Clear';
-import * as styles from '@/views/Settings/styles';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
+import React, { useState } from 'react';
+
 import { useUserSettingsMutations } from '@/query-hooks/user-settings/useUserSettingsMutations';
 import type { IUserSettings } from '@/types/settings.types';
+import * as styles from '@/views/Settings/styles';
 
 const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
   userSettings,
@@ -32,6 +33,14 @@ const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
   const [supervisorName, setSupervisorName] = useState(
     userSettings.supervisor_name ?? ''
   );
+  const [showErrors, setShowErrors] = useState(false);
+
+  const isValid =
+    employeeName.trim() !== '' &&
+    position.trim() !== '' &&
+    department.trim() !== '' &&
+    supervisorName.trim() !== '' &&
+    atlasianKey.trim() !== '';
 
   return (
     <Paper elevation={0} sx={styles.formContainer}>
@@ -47,6 +56,8 @@ const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
             value={employeeName}
             onChange={(e) => setEmployeeName(e.target.value)}
             placeholder="Employee Name"
+            error={showErrors && !employeeName.trim()}
+            helperText={showErrors && !employeeName.trim() && 'Required'}
           />
           <TextField
             fullWidth
@@ -55,6 +66,8 @@ const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
             value={position}
             onChange={(e) => setPosition(e.target.value)}
             placeholder="Position"
+            error={showErrors && !position.trim()}
+            helperText={showErrors && !position.trim() && 'Required'}
           />
           <TextField
             fullWidth
@@ -63,6 +76,8 @@ const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             placeholder="Department"
+            error={showErrors && !department.trim()}
+            helperText={showErrors && !department.trim() && 'Required'}
           />
           <TextField
             fullWidth
@@ -71,6 +86,8 @@ const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
             value={supervisorName}
             onChange={(e) => setSupervisorName(e.target.value)}
             placeholder="Supervisor Name"
+            error={showErrors && !supervisorName.trim()}
+            helperText={showErrors && !supervisorName.trim() && 'Required'}
           />
         </Box>
       </Box>
@@ -110,9 +127,12 @@ const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
               </InputAdornment>
             ),
           }}
+          error={showErrors && !atlasianKey.trim()}
           helperText={
-            !atlasianKey &&
-            'https://id.atlassian.com/manage-profile/security/api-tokens'
+            showErrors && !atlasianKey.trim()
+              ? 'Required'
+              : !atlasianKey &&
+                'https://id.atlassian.com/manage-profile/security/api-tokens'
           }
         />
       </Box>
@@ -120,15 +140,19 @@ const SettingsForm: React.FC<{ userSettings: IUserSettings }> = ({
       <Box sx={styles.actionContainer}>
         <Button
           variant="contained"
-          onClick={() =>
+          onClick={() => {
+            if (!isValid) {
+              setShowErrors(true);
+              return;
+            }
             handleUpdateUserSettings({
               atlasian_key: atlasianKey,
               employee_name: employeeName,
               supervisor_name: supervisorName,
               department,
               position,
-            })
-          }
+            });
+          }}
           sx={styles.saveButton}
           disabled={isUpdating}
         >

@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
 import type { User } from '@supabase/supabase-js';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import { supabase } from '../supabaseClient';
 
 interface AuthContextType {
   user: User | null;
@@ -74,12 +75,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [user]);
 
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         queryParams: { hd: 'cobrick.com' },
+        redirectTo: window.location.origin,
       },
     });
+
+    if (error) {
+      console.error('Sign-in error:', error);
+      throw error;
+    }
   };
 
   const signOut = async () => {

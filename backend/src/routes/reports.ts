@@ -12,7 +12,7 @@ router.post('/generate', async (req: AuthRequest, res) => {
   let browser;
 
   try {
-    const { summary } = req.body;
+    const { summary, month, year } = req.body;
 
     if (!summary || typeof summary !== 'object') {
       return res.status(400).json({ error: 'Missing or invalid summary' });
@@ -28,7 +28,7 @@ router.post('/generate', async (req: AuthRequest, res) => {
       });
     }
 
-    const { start, end } = getReportDateRange();
+    const { start, end } = getReportDateRange(month, year);
 
     const html = generateReportHtml({
       reportPeriod: `${start} - ${end}`,
@@ -63,12 +63,14 @@ router.post('/generate', async (req: AuthRequest, res) => {
     browser = null;
 
     const pdfBuffer = Buffer.from(pdfUint8);
-    const period = format(new Date(end), 'MM/yy');
+    const period = format(new Date(end), 'MM_yy');
     const safeName = employee_name
+      .split(' ')
+      .reverse()
+      .join('_')
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '_');
-    const filename = `${safeName}_${period}_PKUP.pdf`;
+      .replace(/[\u0300-\u036f]/g, '');
+    const filename = `${safeName}_${period}-PKUP.pdf`;
     const storagePath = `${req.user!.id}/${filename}`;
 
     // Upload PDF to Supabase Storage
@@ -83,7 +85,7 @@ router.post('/generate', async (req: AuthRequest, res) => {
       console.error('Storage upload error:', uploadError);
       return res
         .status(500)
-        .json({ error: 'Failed to store PDF', details: uploadError.message });
+        .json({ error: 'Failed to store PDF' });
     }
 
     // Save report metadata to DB
@@ -101,10 +103,7 @@ router.post('/generate', async (req: AuthRequest, res) => {
 
     if (dbError) {
       console.error('DB insert error:', dbError);
-      return res.status(500).json({
-        error: 'Failed to save report metadata',
-        details: dbError.message,
-      });
+      return res.status(500).json({ error: 'Failed to save report metadata' });
     }
 
     // Create a short-lived signed URL for the immediate download
@@ -127,10 +126,7 @@ router.post('/generate', async (req: AuthRequest, res) => {
       await browser.close().catch(() => {});
     }
 
-    return res.status(500).json({
-      error: 'Failed to generate PDF',
-      details: err instanceof Error ? err.message : String(err),
-    });
+    return res.status(500).json({ error: 'Failed to generate PDF' });
   }
 });
 

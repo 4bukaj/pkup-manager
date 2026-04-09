@@ -1,6 +1,7 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { updateUserSettings } from '@/api/settings.api';
 import { useToast } from '@/contexts/ToastContext';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUserSettingsMutations = () => {
   const queryClient = useQueryClient();

@@ -37,10 +37,14 @@ export const chunkArray = <T>(array: T[], size: number): T[][] => {
   return chunks;
 };
 
-export const getReportDateRange = (): { start: string; end: string } => {
-  const today = new Date();
-  const start = set(subMonths(today, 1), { date: 19 });
-  const end = set(today, { date: 18 });
+export const getReportDateRange = (
+  month?: number,
+  year?: number
+): { start: string; end: string } => {
+  const target =
+    month && year ? new Date(year, month - 1, 1) : new Date();
+  const start = set(subMonths(target, 1), { date: 19 });
+  const end = set(target, { date: 18 });
   return {
     start: format(start, 'yyyy-MM-dd'),
     end: format(end, 'yyyy-MM-dd'),

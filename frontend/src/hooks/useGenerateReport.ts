@@ -1,61 +1,76 @@
+import { useEffect, useState } from 'react';
+
 import { fetchJiraIssues } from '@/api/atlassian.api';
 import { getIssuesSummary } from '@/api/gemini.api';
 import { generatePdf } from '@/api/reports.api';
-import { useState } from 'react';
+import { useReportsData } from '@/query-hooks/reports/useReportsData';
 
-// const MOCK_SUMMARY = {
-//   'AIOPS-4404':
-//     'Zaimplementowałem na dashboardzie najemcy przekierowanie kliknięć w komórki alertów i ostrzeżeń do strony z listą problemów',
-//   'AIOPS-4367':
-//     'Zaimplementowałem mały modal CoCo Chat z responsywnym dopasowaniem do desktopu i mobilnych widoków oraz animacjami wejścia/wyjścia',
-//   'AIOPS-4365':
-//     'Zaimplementowałem ulepszenia toastów i zaktualizowałem teksty w Design System',
-//   'AIOPS-4332':
-//     'Zaimplementowałem unieważnianie wybranych metryk w kreatorze alertów po zmianie urządzenia/typ urządzenia oraz dodałem odpowiednie powiadomienia UX',
-//   'AIOPS-4068':
-//     'Zaimplementowałem dodanie danych statusowych (liczba alertów i informacja o stanie połączenia) do tabeli na dashboardzie najemcy',
-// };
+export const useGenerateReport = (month: number, year: number) => {
+  const { refetchReports } = useReportsData();
 
-export const useGenerateReport = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number | null>(null);
 
+  useEffect(() => {
+    setErrorMessage(null);
+    setIsCompleted(false);
+  }, [month, year]);
+
   const handleNextStep = () =>
-    setActiveStep((prev) => (prev !== null ? prev + 1 : null));
+    setActiveStep((prev) => (prev === null ? null : prev + 1));
 
   const handleGenerateReport = async () => {
     try {
-      setIsError(false);
+      setErrorMessage(null);
       setIsCompleted(false);
       setIsLoading(true);
       setActiveStep(0);
 
-      const jiraIssues = await fetchJiraIssues();
+      let jiraIssues;
+      let summary;
+
+      try {
+        jiraIssues = await fetchJiraIssues(month, year);
+      } catch {
+        throw new Error('Failed to fetch Jira issues');
+      }
 
       handleNextStep();
 
-      const summary = await getIssuesSummary(jiraIssues);
-      // await new Promise((resolve) => {
-      //   setTimeout(resolve, 2000);
-      // });
+      try {
+        summary = await getIssuesSummary(jiraIssues);
+      } catch {
+        throw new Error('Failed to summarize issues');
+      }
 
       handleNextStep();
 
-      await generatePdf(summary);
-      // await generatePdf(MOCK_SUMMARY);
+      try {
+        await generatePdf(summary, month, year);
+      } catch {
+        throw new Error('Failed to generate PDF');
+      }
 
       setIsCompleted(true);
     } catch (err) {
-      setIsError(true);
-
-      console.log(err);
+      setErrorMessage(
+        err instanceof Error ? err.message : 'Something went wrong'
+      );
+      console.error(err);
     } finally {
       setIsLoading(false);
       setActiveStep(null);
+      await refetchReports();
     }
   };
 
-  return { activeStep, isLoading, isError, isCompleted, handleGenerateReport };
+  return {
+    activeStep,
+    isLoading,
+    errorMessage,
+    isCompleted,
+    handleGenerateReport,
+  };
 };

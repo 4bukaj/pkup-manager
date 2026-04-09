@@ -1,18 +1,29 @@
-import React from 'react';
+import GoogleIcon from '@mui/icons-material/Google';
 import {
   Box,
   Button,
   Container,
-  Typography,
   Paper,
   Stack,
+  Typography,
 } from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google';
+import React from 'react';
+
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 import * as styles from './styles';
 
 const Login: React.FC = () => {
   const { signInWithGoogle } = useAuth();
+  const { showToast } = useToast();
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch {
+      showToast('Failed to sign in. Please try again.', 'error');
+    }
+  };
 
   return (
     <Container maxWidth="sm">
@@ -31,7 +42,7 @@ const Login: React.FC = () => {
             color="text.secondary"
             sx={styles.subtitle}
           >
-            Machnij se raporcik bratku
+            Fast | Simple | Reliable
           </Typography>
 
           <Stack spacing={2.5}>
@@ -40,7 +51,7 @@ const Login: React.FC = () => {
               variant="contained"
               size="large"
               startIcon={<GoogleIcon />}
-              onClick={signInWithGoogle}
+              onClick={handleSignIn}
               sx={styles.googleButton}
             >
               Continue with Google

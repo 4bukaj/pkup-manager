@@ -35,7 +35,15 @@ router.get('/issues', async (req: AuthRequest, res) => {
       axiosConfig
     );
 
-    const { start, end } = getReportDateRange();
+    const month = req.query.month ? Number.parseInt(req.query.month as string) : undefined;
+    const year = req.query.year ? Number.parseInt(req.query.year as string) : undefined;
+
+    if ((month !== undefined && (Number.isNaN(month) || month < 1 || month > 12)) ||
+        (year !== undefined && (Number.isNaN(year) || year < 2000 || year > 2100))) {
+      return res.status(400).json({ error: 'Invalid month or year parameter' });
+    }
+
+    const { start, end } = getReportDateRange(month, year);
 
     const jql = `
       statusCategory = Done
@@ -60,10 +68,7 @@ router.get('/issues', async (req: AuthRequest, res) => {
     return res.json(issues);
   } catch (err: any) {
     console.error(err?.response?.data ?? err.message);
-    return res.status(500).json({
-      error: 'Failed to fetch Jira data',
-      details: err?.response?.data ?? err.message,
-    });
+    return res.status(500).json({ error: 'Failed to fetch Jira data' });
   }
 });
 

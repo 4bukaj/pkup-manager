@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { supabase } from '@/supabaseClient';
 
 const api = axios.create({

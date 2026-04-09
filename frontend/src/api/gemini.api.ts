@@ -1,4 +1,5 @@
 import type { IJiraIssue } from '@/types/gemini.types';
+
 import api from '.';
 
 const BASE_PATH = '/api/gemini';

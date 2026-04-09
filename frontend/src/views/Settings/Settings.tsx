@@ -1,9 +1,11 @@
+import { Box, Container, Paper, Skeleton,Typography } from '@mui/material';
 import React from 'react';
-import { Box, Container, Typography, Paper, Skeleton } from '@mui/material';
-import * as styles from './styles';
-import PageLayout from '../../components/page-layout';
-import { useUserSettingsData } from '@/query-hooks/user-settings/useUserSettingsData';
+
 import SettingsForm from '@/components/settings/settings-form';
+import { useUserSettingsData } from '@/query-hooks/user-settings/useUserSettingsData';
+
+import PageLayout from '../../components/page-layout';
+import * as styles from './styles';
 
 const skeletonInput = (
   <Skeleton

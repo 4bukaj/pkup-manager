@@ -1,18 +1,19 @@
 import type { IIssuesSummary } from '@/types/gemini.types';
 import type { Report } from '@/types/report';
+
 import api from '.';
 
 const BASE_PATH = '/api/reports';
 
-export const generatePdf = async (summary: IIssuesSummary): Promise<Report> => {
+export const generatePdf = async (
+  summary: IIssuesSummary,
+  month?: number,
+  year?: number
+): Promise<Report> => {
   const response = await api.post<{
     report: Report;
     downloadUrl: string | null;
-  }>(`${BASE_PATH}/generate`, { summary });
-
-  if (response.data.downloadUrl) {
-    window.open(response.data.downloadUrl, '_blank');
-  }
+  }>(`${BASE_PATH}/generate`, { summary, month, year });
 
   return response.data.report;
 };

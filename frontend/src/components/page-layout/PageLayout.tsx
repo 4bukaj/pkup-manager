@@ -1,13 +1,14 @@
-import React, { useState, type ReactNode } from 'react';
-import { AppBar, Toolbar, Box, Typography, IconButton } from '@mui/material';
-import DescriptionIcon from '@mui/icons-material/Description';
-import { Menu, MenuItem, ListItemIcon } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import * as styles from './styles';
+import DescriptionIcon from '@mui/icons-material/Description';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { AppBar, Box, IconButton,Toolbar, Typography } from '@mui/material';
+import { ListItemIcon,Menu, MenuItem } from '@mui/material';
+import React, { type ReactNode,useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { useAuth } from '../../contexts/AuthContext';
+import * as styles from './styles';
 
 const PageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, signOut } = useAuth();

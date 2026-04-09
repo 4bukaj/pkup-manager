@@ -1,8 +1,9 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Navigate,Route, Routes } from 'react-router-dom';
+
 import { useAuth } from '../contexts/AuthContext';
-import Login from '../views/Login';
 import Dashboard from '../views/Dashboard';
+import Login from '../views/Login';
 import Settings from '../views/Settings';
 
 const AppRoutes: React.FC = () => {

@@ -1,10 +1,11 @@
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { CssBaseline,ThemeProvider } from '@mui/material';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter as Router } from 'react-router-dom';
-import theme from './theme';
+
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import AppRoutes from './routes/AppRoutes';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import theme from './theme';
 
 const queryClient = new QueryClient();
 

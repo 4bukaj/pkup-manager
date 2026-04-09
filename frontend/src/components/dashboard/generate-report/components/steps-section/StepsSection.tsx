@@ -1,5 +1,6 @@
-import { Box, Typography } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Box, Typography } from '@mui/material';
+
 import * as styles from './styles';
 import type { StepsSectionProps } from './types';
 

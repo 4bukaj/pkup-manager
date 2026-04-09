@@ -1,33 +1,43 @@
-import React, { useState } from 'react';
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
   Box,
-  Typography,
+  CircularProgress,
+  IconButton,
   Paper,
+  Skeleton,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Stack,
-  IconButton,
   Tooltip,
-  CircularProgress,
-  Skeleton,
+  Typography,
 } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
-import * as styles from './styles';
+import React, { useState } from 'react';
+
 import { useReportsData } from '@/query-hooks/reports/useReportsData';
 import { useReportsMutations } from '@/query-hooks/reports/useReportsMutations';
+
+import * as styles from './styles';
 import type { ReportsTableProps } from './types';
 
 const SKELETON_ROWS = 3;
 
 const ReportsTable: React.FC<ReportsTableProps> = ({ isReportsLoading }) => {
-  const { reports } = useReportsData();
+  const { reports: unsortedReports } = useReportsData();
+
+  const reports = unsortedReports
+    ?.slice()
+    .sort((a, b) =>
+      (b.report_period.split(' - ')[1] ?? '').localeCompare(
+        a.report_period.split(' - ')[1] ?? ''
+      )
+    );
   const { handleDeleteReport, handleViewReport } = useReportsMutations();
 
   const [viewingId, setViewingId] = useState<string | null>(null);
@@ -48,11 +58,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ isReportsLoading }) => {
   const getFilename = (storagePath: string) =>
     storagePath.split('/').pop() ?? storagePath;
 
-  const getMonth = (createdAt: string) =>
-    new Date(createdAt).toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric',
-    });
+  const getMonth = (reportName: string) => reportName;
 
   if (isReportsLoading) {
     return (
@@ -154,7 +160,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ isReportsLoading }) => {
                   <TableCell sx={styles.tableBodyCell}>
                     <Box sx={styles.monthChip}>
                       <CalendarTodayOutlinedIcon sx={{ fontSize: 11 }} />
-                      {getMonth(report.created_at)}
+                      {getMonth(report.name)}
                     </Box>
                   </TableCell>
                   <TableCell align="right" sx={styles.actionsCell}>
