@@ -1,24 +1,42 @@
 # pkup-manager
 
-Automatically generate Polish monthly creative work reports (PKUP) from your Jira activity. Fetches completed issues, summarizes them in Polish using Gemini AI, and outputs a professionally formatted PDF.
+Built this app to avoid the tedious task
+of manually gathering the Jira issues I
+worked on each month and summarizing the
+work for the PKUP report. It fetches
+completed issues from Jira, summarizes
+them using Gemini AI, and outputs a
+nicely formatted PDF.
 
 ## Features
 
-- **Jira Integration** — Fetches closed issues assigned to you for a selected month (19th prev month - 18th current month)
-- **AI Summarization** — Gemini API generates Polish-language summaries with gender-aware verb conjugation
-- **PDF Generation** — Produces A4-formatted reports via Puppeteer with employee details, task descriptions, and attachments
-- **Report Management** — View, download, and delete past reports from the dashboard
-- **Month Selector** — Generate reports for any of the last 12 months
-- **Google OAuth** — Authentication via Supabase, restricted to company domain
+- **Jira Integration** — Fetches closed
+  issues assigned to you for a selected
+  month (19th prev month - 18th current
+  month)
+- **AI Summarization** — Gemini API
+  generates Polish-language summaries
+  with gender-aware verb conjugation
+- **PDF Generation** — Produces
+  A4-formatted reports via Puppeteer
+  with employee details, task
+  descriptions, and attachments
+- **Report Management** — View,
+  download, and delete past reports from
+  the dashboard
+- **Month Selector** — Generate reports
+  for any of the last 12 months
+- **Google OAuth** — Authentication via
+  Supabase, restricted to company domain
 
 ## Tech Stack
 
-| Layer      | Stack                                              |
-|------------|----------------------------------------------------|
-| Frontend   | React 19, TypeScript, Vite, MUI 7, TanStack Query |
-| Backend    | Node.js, Express, Puppeteer, Google Gemini AI      |
-| Database   | Supabase (PostgreSQL, Auth, Storage)               |
-| External   | Atlassian Jira Cloud API                           |
+| Layer    | Stack                                             |
+| -------- | ------------------------------------------------- |
+| Frontend | React 19, TypeScript, Vite, MUI 7, TanStack Query |
+| Backend  | Node.js, Express, Puppeteer, Google Gemini AI     |
+| Database | Supabase (PostgreSQL, Auth, Storage)              |
+| External | Atlassian Jira Cloud API                          |
 
 ## Getting Started
 
@@ -97,14 +115,14 @@ pkup-manager/
 
 All routes require JWT authentication.
 
-| Method   | Endpoint                       | Description              |
-|----------|--------------------------------|--------------------------|
-| `GET`    | `/api/atlassian/issues`        | Fetch Jira issues        |
-| `POST`   | `/api/gemini/summarize-issues` | AI-summarize issues      |
-| `POST`   | `/api/reports/generate`        | Generate PDF report      |
-| `GET`    | `/api/reports/all`             | List user's reports      |
-| `GET`    | `/api/reports/:id/download`    | Get signed download URL  |
-| `DELETE` | `/api/reports/:id`             | Delete a report          |
+| Method   | Endpoint                       | Description             |
+| -------- | ------------------------------ | ----------------------- |
+| `GET`    | `/api/atlassian/issues`        | Fetch Jira issues       |
+| `POST`   | `/api/gemini/summarize-issues` | AI-summarize issues     |
+| `POST`   | `/api/reports/generate`        | Generate PDF report     |
+| `GET`    | `/api/reports/all`             | List user's reports     |
+| `GET`    | `/api/reports/:id/download`    | Get signed download URL |
+| `DELETE` | `/api/reports/:id`             | Delete a report         |
 
 ## Report Generation Flow
 
@@ -113,4 +131,5 @@ Select month  ->  Fetch Jira issues  ->  Summarize with Gemini  ->  Generate PDF
                   (Step 1)               (Step 2)                   (Step 3)
 ```
 
-Reports are stored in Supabase Storage and metadata is saved to the database.
+Reports are stored in Supabase Storage
+and metadata is saved to the database.
